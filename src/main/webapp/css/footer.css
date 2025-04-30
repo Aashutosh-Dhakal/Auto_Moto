@@ -1,0 +1,85 @@
+footer {
+    background-color: #373A40;
+    color: #F0F0F0;
+    font-family: sans-serif;
+    padding: 40px 0 20px 0;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.footer-columns {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+
+.footer-col {
+    width: 23%;
+    margin-bottom: 20px;
+}
+
+.footer-col h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #FF6B00;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.footer-col ul li a {
+    color: #CCCCCC;
+    text-decoration: none;
+    transition: color 0.3s, text-decoration 0.3s;
+}
+
+.footer-col ul li a:hover {
+    color: #FF6B00;
+    text-decoration: none;
+}
+
+.contact {
+    text-align: center;
+}
+
+.contact .email-icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.contact button {
+    background-color: #FF6B00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.contact button:hover {
+    background-color: #e15a00;
+    
+}
+
+.footer-bottom {
+    text-align: center;
+    border-top: 1px solid #333;
+    padding-top: 15px;
+    font-size: 13px;
+    color: #AAAAAA;
+}
