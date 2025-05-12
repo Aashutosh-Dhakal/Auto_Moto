@@ -23,13 +23,11 @@
   </div>
 
   <div class="search-user">
-    <input type="text" placeholder="Search" aria-label="Search">
-
     <div class="icon-container">
-      <a href="rentedbike">
-        <img src="${pageContext.request.contextPath}/resources/images/system/iconBike.png" alt="Rented Bike Icon" class="icon-img">
+      <a href="${pageContext.request.contextPath}/search">
+        <img src="${pageContext.request.contextPath}/resources/images/system/iconSearch.png" alt="Search Icon" class="icon-img">
       </a>
-      <a href="login">
+      <a href="${pageContext.request.contextPath}/login">
         <img src="${pageContext.request.contextPath}/resources/images/system/userIcon.png" alt="User Profile Icon" class="icon-img">
       </a>
     </div>

@@ -91,7 +91,7 @@ public class LoginService {
             e.printStackTrace();
         }
 
-        return "customer"; // Default to customer if not found or error occurs
+        return "customer";
     }
 
     /**

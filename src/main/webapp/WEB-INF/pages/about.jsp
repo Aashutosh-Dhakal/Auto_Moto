@@ -34,7 +34,7 @@
                     
                     <br>
                     
-                    <a href="https://github.com/Aashutosh-Dhakal/AutoMoto" class="learn-more-btn" target="_blank">Learn More ....</a>
+                    <a href="https://github.com/Aashutosh-Dhakal/Auto_Moto" class="learn-more-btn" target="_blank">Learn More ....</a>
                 </div>
             </div>
         </section>

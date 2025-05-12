@@ -14,6 +14,11 @@ import com.automoto.util.SessionUtil;
 public class Logout extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        performLogout(request, response);
+    }
+    
     // Handle POST requests (form submissions)
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {

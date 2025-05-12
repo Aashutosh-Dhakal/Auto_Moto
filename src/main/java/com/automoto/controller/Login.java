@@ -54,11 +54,11 @@ public class Login extends HttpServlet {
                 request.setAttribute("errorMessage", "System error occurred. Please try again later.");
                 request.getRequestDispatcher("WEB-INF/pages/login.jsp").forward(request, response);
             } else if (loginResult) {
-                SessionUtil.setAttribute(request, "username", email);
+            	SessionUtil.setAttribute(request, "email", email);
                 
                 String userRole = loginService.getUserRole(email);
                 
-                CookieUtil.addCookie(response, "role", userRole.toLowerCase(), 24 * 60 * 60);
+                CookieUtil.addCookie(response, "role", userRole.toLowerCase(), 10 *  30);
                 
                 SessionUtil.setAttribute(request, "successMessage", "Login successful! Welcome back!");
                 

@@ -28,90 +28,162 @@ body {
 }
 
 .product-display-section {
-    padding: 20px;
-    margin: 20px;
-    background-color: #FFFFFF;
-    border-radius: 10px;
+  padding: 25px 25px 40px;
+  margin: 30px 10px;
+  background-color: #FFFFFF;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
 }
 
 .product-display-section h2 {
-    margin-bottom: 20px;
-    color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 28px;
+  text-align: left;
+  position: relative;
+  padding-bottom: 10px;
+  padding-left: 10px;
+}
+
+.product-display-section h2:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 10px;
+  width: 80px;
+  height: 3px;
+  background-color: #DC5F00;
 }
 
 .product-cards {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: space-between;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: space-between;
 }
 
 .product-card {
-    background-color: #F9F9F9;
-    border-radius: 15px;
-    width: 300px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  background-color: #FFFFFF;
+  border-radius: 18px;
+  width: calc(20% - 18px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.product-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(220,95,0,0.15);
 }
 
 .product-img {
-    height: 200px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 220px;
+  overflow: hidden;
+  position: relative;
+}
+
+.product-img:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  background: linear-gradient(to top, rgba(255,255,255,0.8), transparent);
 }
 
 .product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-img img {
+  transform: scale(1.05);
 }
 
 .product-details {
-    padding: 15px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background: linear-gradient(to bottom, #f9f9f9, #ffffff);
 }
 
 .product-details h3 {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #222;
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #222;
+  font-weight: 600;
 }
 
 .product-details p {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 15px;
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 5px;
+  line-height: 1.6;
+  flex-grow: 1;
 }
 
-.product-details button {
-    padding: 10px 15px;
-    background-color: #DC5F00;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.product-details button:hover {
-    background-color: #b94e00;
+.message-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0; 
+    padding: 0 10px;
 }
 
 .alert {
-  padding: 15px 20px;
-  margin-bottom: 25px;
-  border-radius: 10px;
-  font-size: 16px;
-  text-align: center;
-  font-weight: bold;
-  border: 1px solid;
+    padding: 15px;
+    margin: 0 0 20px 0;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
 }
 
 .alert-success {
     background-color: #dff0d8;
     color: #3c763d;
     border: 1px solid #d6e9c6;
+}
+
+.alert-error {
+    background-color: #f2dede;
+    color: #a94442;
+    border: 1px solid #ebccd1;
+}
+
+.rent-form {
+    margin-top: auto;
+}
+
+.rent-btn {
+    margin-top: 10px;
+    padding: 12px 18px;
+    background-color: #DC5F00;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    font-size: 16px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.rent-btn:hover {
+    background-color: #c75300; /* Slightly darker for hover effect */
+    transform: translateY(-3px);
+    box-shadow: 0 5px 10px rgba(220, 95, 0, 0.3);
+}
+
+.rent-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(220, 95, 0, 0.3);
 }

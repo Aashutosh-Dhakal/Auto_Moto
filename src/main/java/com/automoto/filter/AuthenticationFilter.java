@@ -2,7 +2,7 @@ package com.automoto.filter;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.FilterConfig;
+//import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -13,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import com.automoto.util.CookieUtil;
-import com.automoto.util.SessionUtil;
 
 @WebFilter(asyncSupported = true, urlPatterns = "/*")
 public class AuthenticationFilter implements Filter {
@@ -27,12 +26,10 @@ public class AuthenticationFilter implements Filter {
     private static final String CONTACT = "/contact";
     private static final String PROFILE = "/profile";
     private static final String LOGOUT = "/logout";
-    private static final String RENTED_BIKE = "/rentedbike";
+    private static final String SEARCH = "/search";
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialization logic, if required
-    }
+//    @Override
+//    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -44,12 +41,12 @@ public class AuthenticationFilter implements Filter {
         String uri = req.getRequestURI();
         
         // Allow access to resources
-        if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".css")) {
-            chain.doFilter(request, response);
-            return;
-        }
+        if (uri.endsWith(".png") || uri.endsWith(".jpg") || uri.endsWith(".jpeg") || 
+        	    uri.endsWith(".css") || uri.endsWith(".gif")) {
+        	    chain.doFilter(request, response);
+        	    return;
+        	}
         
-        boolean isLoggedIn = SessionUtil.getAttribute(req, "username") != null;
         String userRole = CookieUtil.getCookie(req, "role") != null ? CookieUtil.getCookie(req, "role").getValue()
                 : null;
 
@@ -59,10 +56,8 @@ public class AuthenticationFilter implements Filter {
                 res.sendRedirect(req.getContextPath() + PROFILE);
             } else if (uri.endsWith(ADMIN) || uri.endsWith(HOME) || uri.endsWith(ROOT) 
                     || uri.endsWith(ABOUT) || uri.endsWith(CONTACT) || uri.endsWith(PROFILE) 
-                    || uri.endsWith(LOGOUT)) {
+                    || uri.endsWith(LOGOUT) || uri.endsWith(SEARCH)) {
                 chain.doFilter(request, response);
-            } else if (uri.endsWith(RENTED_BIKE)) {
-            	res.sendRedirect(req.getContextPath() + HOME);
             } else {
                 res.sendRedirect(req.getContextPath() + ADMIN);
             }
@@ -72,7 +67,7 @@ public class AuthenticationFilter implements Filter {
                 res.sendRedirect(req.getContextPath() + PROFILE);
             } else if (uri.endsWith(HOME) || uri.endsWith(ROOT) || uri.endsWith(ABOUT) 
                     || uri.endsWith(CONTACT) || uri.endsWith(PROFILE) || uri.endsWith(LOGOUT) 
-                    || uri.endsWith(RENTED_BIKE)) {
+                    || uri.endsWith(SEARCH)) {
                 chain.doFilter(request, response);
             } else if (uri.endsWith(ADMIN)) {
                 res.sendRedirect(req.getContextPath() + HOME);
@@ -82,7 +77,7 @@ public class AuthenticationFilter implements Filter {
         } else {
             // Not logged in
             if (uri.endsWith(LOGIN) || uri.endsWith(REGISTER) || uri.endsWith(HOME) 
-                    || uri.endsWith(ROOT) || uri.endsWith(ABOUT) || uri.endsWith(CONTACT)) {
+                    || uri.endsWith(ROOT) || uri.endsWith(ABOUT) || uri.endsWith(CONTACT) || uri.endsWith(SEARCH)) {
                 chain.doFilter(request, response);
             } else {
                 res.sendRedirect(req.getContextPath() + LOGIN);
@@ -90,8 +85,7 @@ public class AuthenticationFilter implements Filter {
         }
     }
 
-    @Override
-    public void destroy() {
-        // Cleanup logic, if required
-    }
+//    @Override
+//    public void destroy() {
+//    }
 }
