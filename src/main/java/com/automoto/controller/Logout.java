@@ -10,33 +10,59 @@ import java.io.IOException;
 import com.automoto.util.CookieUtil;
 import com.automoto.util.SessionUtil;
 
+/**
+ * Handles user logout functionality by clearing session and role cookie.
+ * Supports both GET and POST requests for logout operations.
+ * Redirects to home page after successful logout.
+ */
 @WebServlet(asyncSupported = true, urlPatterns = {"/logout"})
 public class Logout extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Handles GET requests for logout.
+     * Delegates to performLogout method to process the logout operation.
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         performLogout(request, response);
     }
     
-    // Handle POST requests (form submissions)
+    /**
+     * Handles POST requests for logout.
+     * Delegates to performLogout method to process the logout operation.
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws ServletException if a servlet error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         performLogout(request, response);
     }
 
-    // Shared logout logic
+    /**
+     * Performs the actual logout operations:
+     * 1. Deletes the role cookie
+     * 2. Invalidates the current session
+     * 3. Redirects to home page
+     *
+     * @param request  The HttpServletRequest object
+     * @param response The HttpServletResponse object
+     * @throws IOException if an I/O error occurs during redirection
+     */
     private void performLogout(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
-        // 1. Delete all authentication cookies
         CookieUtil.deleteCookie(response, "role");
-        // Add any other cookies you need to clear
-        // CookieUtil.deleteCookie(response, "otherCookieName");
 
-        // 2. Invalidate the session
         SessionUtil.invalidateSession(request);
 
-        // 3. Redirect to home page
         response.sendRedirect(request.getContextPath() + "/home");
     }
 }

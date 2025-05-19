@@ -10,8 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * Service class for handling login operations. Connects to the database,
- * verifies user credentials, and returns login status.
+ * Service class for handling login operations in the AutoMoto system.
+ * Handles user authentication and role retrieval from the database.
  */
 public class LoginService {
 
@@ -19,8 +19,8 @@ public class LoginService {
     private boolean isConnectionError = false;
 
     /**
-     * Constructor initializes the database connection. Sets the connection error
-     * flag if the connection fails.
+     * Default constructor for LoginService.
+     * Initializes database connection and sets error flag if connection fails.
      */
     public LoginService() {
         try {
@@ -32,18 +32,18 @@ public class LoginService {
     }
 
     /**
-     * Returns whether there was a connection error during initialization
+     * Checks if there was a connection error during initialization.
+     * @return true if connection error occurred, false otherwise
      */
     public boolean isConnectionError() {
         return isConnectionError;
     }
 
     /**
-     * Validates the user credentials against the database records.
-     *
-     * @param userModel the UserModel object containing user credentials
-     * @return true if the user credentials are valid, false otherwise; null if a
-     *         connection error occurs
+     * Authenticates user credentials against the database.
+     * @param userModel The UserModel object containing login credentials
+     * @return true if authentication successful, false if failed, 
+     *         null if connection error occurred
      */
     public Boolean loginUser(UserModel userModel) {
         if (isConnectionError) {
@@ -69,13 +69,12 @@ public class LoginService {
 
     /**
      * Retrieves the user's role from the database.
-     * 
-     * @param email the user's email
-     * @return the user's role or "customer" if not found/specified
+     * @param email The email address of the user
+     * @return The user's role as String, defaults to "customer" if not specified
      */
     public String getUserRole(String email) {
         if (isConnectionError) {
-            return "customer"; // Default to customer if there's a connection error
+            return "customer"; 
         }
 
         String query = "SELECT Role FROM User WHERE Email = ?";
@@ -95,13 +94,11 @@ public class LoginService {
     }
 
     /**
-     * Validates the password retrieved from the database.
-     *
-     * @param result    the ResultSet containing the email and password from
-     *                  the database
-     * @param userModel the UserModel object containing user credentials
-     * @return true if the passwords match, false otherwise
-     * @throws SQLException if a database access error occurs
+     * Validates the user's password against the encrypted database password.
+     * @param result The ResultSet containing database credentials
+     * @param userModel The UserModel object containing user credentials
+     * @return true if passwords match, false otherwise
+     * @throws SQLException if database access error occurs
      */
     private boolean validatePassword(ResultSet result, UserModel userModel) throws SQLException {
         String dbEmail = result.getString("Email");

@@ -6,9 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Service class for handling bike rental operations in the AutoMoto system.
+ * Manages the process of renting bikes and maintaining rental records.
+ */
 public class RentalService {
     private Connection dbConn;
 
+    /**
+     * Default constructor for RentalService.
+     * Initializes database connection.
+     */
     public RentalService() {
         try {
             this.dbConn = DbConfig.getDbConnection();
@@ -17,6 +25,12 @@ public class RentalService {
         }
     }
 
+    /**
+     * Rents a bike to a user.
+     * @param userEmail The email of the user renting the bike
+     * @param plateNo The plate number of the bike being rented
+     * @return true if rental was successful, false otherwise
+     */
     public boolean rentBike(String userEmail, String plateNo) {
         if (dbConn == null) {
             System.err.println("DB connection is null in RentalService.");
@@ -52,6 +66,12 @@ public class RentalService {
         return false;
     }
     
+    /**
+     * Retrieves bike ID by plate number.
+     * @param plateNo The plate number of the bike
+     * @return bike ID if found, -1 if not found
+     * @throws SQLException if database access error occurs
+     */
     private int getBikeIdByPlateNo(String plateNo) throws SQLException {
         String query = "SELECT Bike_ID FROM bike WHERE Plate_No = ?";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {
@@ -64,6 +84,12 @@ public class RentalService {
         }
     }
     
+    /**
+     * Retrieves user ID by email address.
+     * @param email The email address of the user
+     * @return user ID if found, -1 if not found
+     * @throws SQLException if database access error occurs
+     */
     public int getUserIdByEmail(String email) throws SQLException {
         String query = "SELECT User_ID FROM user WHERE Email = ?";
         try (PreparedStatement stmt = dbConn.prepareStatement(query)) {

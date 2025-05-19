@@ -11,10 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Provides administrative services for managing bikes and users in the AutoMoto system.
+ * Handles database operations related to bike and user management.
+ */
 public class AdminService {
     private Connection dbConn;
     private boolean isConnectionError = false;
 
+    /**
+     * Default constructor for AdminService.
+     * Initializes database connection.
+     */
     public AdminService() {
         try {
             dbConn = DbConfig.getDbConnection();
@@ -24,10 +32,18 @@ public class AdminService {
         }
     }
 
+    /**
+     * Checks if there was a connection error during initialization.
+     * @return true if connection error occurred, false otherwise
+     */
     public boolean isConnectionError() {
         return isConnectionError;
     }
 
+    /**
+     * Retrieves all bikes from the database.
+     * @return List of BikeModel objects containing all bikes
+     */
     public List<BikeModel> getAllBikes() {
         List<BikeModel> bikes = new ArrayList<>();
         if (isConnectionError) {
@@ -53,6 +69,10 @@ public class AdminService {
         return bikes;
     }
 
+    /**
+     * Retrieves all customer users from the database.
+     * @return List of UserModel objects containing all customer users
+     */
     public List<UserModel> getAllUsers() {
         List<UserModel> users = new ArrayList<>();
         if (isConnectionError) {
@@ -79,6 +99,11 @@ public class AdminService {
         return users;
     }
 
+    /**
+     * Adds a new bike to the database.
+     * @param bike The BikeModel object containing bike details
+     * @return true if bike was added successfully, false otherwise
+     */
     public boolean addBike(BikeModel bike) {
         String query = "INSERT INTO Bike (Plate_No, Brand, Model, Type, Bike_Condition, Image) " +
                       "VALUES (?, ?, ?, ?, ?, ?)";
@@ -98,6 +123,11 @@ public class AdminService {
         }
     }
     
+    /**
+     * Updates an existing bike in the database.
+     * @param bike The BikeModel object containing updated bike details
+     * @return true if bike was updated successfully, false otherwise
+     */
     public boolean updateBike(BikeModel bike) {
         String query = "UPDATE Bike SET Brand = ?, Model = ?, Type = ?, " +
                       "Bike_Condition = ?, Image = ? WHERE Plate_No = ?";
@@ -117,6 +147,11 @@ public class AdminService {
         }
     }
     
+    /**
+     * Deletes a bike from the database.
+     * @param plateNo The plate number of the bike to delete
+     * @return true if bike was deleted successfully, false otherwise
+     */
     public boolean deleteBike(String plateNo) {
         String query = "DELETE FROM Bike WHERE Plate_No = ?";
         
@@ -129,6 +164,11 @@ public class AdminService {
         }
     }
     
+    /**
+     * Deletes a user from the database.
+     * @param email The email of the user to delete
+     * @return true if user was deleted successfully, false otherwise
+     */
     public boolean deleteUser(String email) {
         String query = "DELETE FROM User WHERE Email = ?";
         
@@ -141,6 +181,9 @@ public class AdminService {
         }
     }
     
+    /**
+     * Closes the database connection.
+     */
     public void closeConnection() {
         if (dbConn != null) {
             try {

@@ -16,23 +16,37 @@ import jakarta.servlet.http.Part;
 
 import java.io.IOException;
 
+/**
+ * Handles user registration process including form validation, duplicate checks,
+ * profile picture upload, and database insertion. Supports multipart form data
+ * for file uploads with size constraints.
+ */
 @WebServlet(asyncSupported = true, urlPatterns = {"/register"})
 @MultipartConfig(
-    fileSizeThreshold = 1024 * 1024 * 2,
-    maxFileSize = 1024 * 1024 * 10,
-    maxRequestSize = 1024 * 1024 * 50
+    fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
+    maxFileSize = 1024 * 1024 * 10,       // 10MB
+    maxRequestSize = 1024 * 1024 * 50     // 50MB
 )
 public class Register extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private final RegisterService registerService = new RegisterService();
     private final ImageUtil imageUtil = new ImageUtil();
 
+    /**
+     * Displays the registration form.
+     * Forwards to register.jsp view page.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.getRequestDispatcher("WEB-INF/pages/register.jsp").forward(request, response);
     }
 
+    /**
+     * Processes registration form submission.
+     * Validates all fields, checks for duplicates, uploads profile image,
+     * and creates new user account. Redirects to login page on success.
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -46,9 +60,18 @@ public class Register extends HttpServlet {
         }
     }
 
+    /**
+     * Validates all registration form fields and processes the registration.
+     * Performs field validation, duplicate checks, image upload, and user creation.
+     * 
+     * @param request The HttpServletRequest containing form data
+     * @param response The HttpServletResponse for redirects
+     * @return true if registration was successful, false otherwise
+     */
     private boolean validateRegistrationForm(HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
 
+        // Retrieve all form parameters
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String email = request.getParameter("email");
@@ -62,6 +85,7 @@ public class Register extends HttpServlet {
         boolean isValid = true;
 
         // --- Field Validations ---
+        // First Name validation
         if (ValidationUtil.isNullOrEmpty(firstName)) {
             request.setAttribute("firstNameError", "Field shouldn't be empty.");
             isValid = false;
@@ -70,6 +94,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Last Name validation
         if (ValidationUtil.isNullOrEmpty(lastName)) {
             request.setAttribute("lastNameError", "Field shouldn't be empty.");
             isValid = false;
@@ -78,6 +103,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Email validation
         if (ValidationUtil.isNullOrEmpty(email)) {
             request.setAttribute("emailError", "Field shouldn't be empty.");
             isValid = false;
@@ -86,6 +112,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Phone validation
         if (ValidationUtil.isNullOrEmpty(phoneNumber)) {
             request.setAttribute("phoneError", "Field shouldn't be empty.");
             isValid = false;
@@ -94,6 +121,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Citizenship validation
         if (ValidationUtil.isNullOrEmpty(citizenshipNo)) {
             request.setAttribute("citizenshipError", "Field shouldn't be empty.");
             isValid = false;
@@ -102,6 +130,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // License validation
         if (ValidationUtil.isNullOrEmpty(licenseNumber)) {
             request.setAttribute("licenseError", "Field shouldn't be empty.");
             isValid = false;
@@ -110,6 +139,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Password validation
         if (ValidationUtil.isNullOrEmpty(password)) {
             request.setAttribute("passwordError", "Field shouldn't be empty.");
             isValid = false;
@@ -118,6 +148,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Confirm Password validation
         if (ValidationUtil.isNullOrEmpty(confirmPassword)) {
             request.setAttribute("confirmPasswordError", "Field shouldn't be empty.");
             isValid = false;
@@ -126,6 +157,7 @@ public class Register extends HttpServlet {
             isValid = false;
         }
 
+        // Profile Image validation and upload
         String fileName = null;
         if (profileImage == null || profileImage.getSize() == 0) {
             request.setAttribute("profileImageError", "Please upload an image.");
@@ -173,13 +205,14 @@ public class Register extends HttpServlet {
             return false;
         }
 
-
+        // Password encryption
         String encryptedPassword = PasswordUtil.encrypt(email, password);
         if (encryptedPassword == null) {
             request.setAttribute("formError", "Password encryption failed. Please try again.");
             return false;
         }
 
+        // Create and save user
         UserModel user = new UserModel(
                 firstName, lastName, phoneNumber, email, encryptedPassword,
                 citizenshipNo, licenseNumber, fileName

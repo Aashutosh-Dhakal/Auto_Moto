@@ -9,9 +9,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Service class for handling user profile operations in the AutoMoto system.
+ * Manages user details, profile pictures, and credential verification.
+ */
 public class ProfileService {
     private Connection dbConn;
 
+    /**
+     * Default constructor for ProfileService.
+     * Initializes database connection.
+     */
     public ProfileService() {
         try {
             this.dbConn = DbConfig.getDbConnection();
@@ -20,6 +28,11 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Retrieves user details from the database.
+     * @param username The email address of the user
+     * @return UserModel object containing user details, or null if not found
+     */
     public UserModel getUserDetails(String username) {
         if (dbConn == null) {
             System.err.println("DB connection is null in ProfileService.");
@@ -50,6 +63,12 @@ public class ProfileService {
         return null;
     }
 
+    /**
+     * Updates user profile information in the database.
+     * @param userModel The UserModel object containing updated details
+     * @param username The original email address of the user
+     * @return true if update was successful, false otherwise
+     */
     public Boolean editUser(UserModel userModel, String username) {
         if (dbConn == null) {
             System.err.println("Database connection is not available.");
@@ -75,6 +94,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Updates the user's profile picture in the database.
+     * @param email The email address of the user
+     * @param imageName The filename of the new profile picture
+     * @return true if update was successful, false otherwise
+     */
     public boolean updateProfilePicture(String email, String imageName) {
         if (dbConn == null) {
             System.err.println("Database connection is not available.");
@@ -94,6 +119,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Verifies if the provided password matches the user's current password.
+     * @param email The email address of the user
+     * @param password The password to verify
+     * @return true if password matches, false otherwise
+     */
     public boolean verifyCurrentPassword(String email, String password) {
         if (dbConn == null) {
             return false;
@@ -116,6 +147,12 @@ public class ProfileService {
         }
     }
     
+    /**
+     * Updates the user's password in the database.
+     * @param email The email address of the user
+     * @param newPassword The new password to set
+     * @return true if update was successful, false otherwise
+     */
     public boolean updatePassword(String email, String newPassword) {
         if (dbConn == null) {
             return false;
@@ -138,6 +175,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Checks if an email address is already taken by another user.
+     * @param email The email address to check
+     * @param username The current user's email address
+     * @return true if email is taken by another user, false otherwise
+     */
     public boolean isEmailTaken(String email, String username) {
         if (dbConn == null) {
             return false;
@@ -154,6 +197,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Checks if a phone number is already taken by another user.
+     * @param phone The phone number to check
+     * @param username The current user's email address
+     * @return true if phone number is taken by another user, false otherwise
+     */
     public boolean isPhoneTaken(String phone, String username) {
         if (dbConn == null) {
             return false;
@@ -170,6 +219,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Checks if a citizenship number is already taken by another user.
+     * @param citizenshipNo The citizenship number to check
+     * @param username The current user's email address
+     * @return true if citizenship number is taken by another user, false otherwise
+     */
     public boolean isCitizenshipNoTaken(String citizenshipNo, String username) {
         if (dbConn == null) {
             return false;
@@ -186,6 +241,12 @@ public class ProfileService {
         }
     }
 
+    /**
+     * Checks if a license number is already taken by another user.
+     * @param licenseNo The license number to check
+     * @param username The current user's email address
+     * @return true if license number is taken by another user, false otherwise
+     */
     public boolean isLicenseNoTaken(String licenseNo, String username) {
         if (dbConn == null) {
             return false;

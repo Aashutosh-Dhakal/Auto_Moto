@@ -7,8 +7,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * Service class for handling user registration operations in the AutoMoto system.
+ * Manages user registration and field validation.
+ */
 public class RegisterService {
 
+    /**
+     * Checks if a field value already exists in the database.
+     * @param fieldName The name of the database field to check
+     * @param value The value to check for existence
+     * @return true if the value exists, false otherwise or if an error occurs
+     */
     public boolean isFieldValueExists(String fieldName, String value) {
         String sql = "SELECT COUNT(*) FROM User WHERE " + fieldName + " = ?";
         
@@ -28,6 +38,11 @@ public class RegisterService {
         return false;
     }
 
+    /**
+     * Adds a new user to the database.
+     * @param user The UserModel object containing user details
+     * @return true if the user was successfully added, false otherwise
+     */
     public boolean addUser(UserModel user) {
         boolean isInserted = false;
 

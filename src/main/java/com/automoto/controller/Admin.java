@@ -16,6 +16,13 @@ import com.automoto.service.AdminService;
 import com.automoto.util.ImageUtil;
 import com.automoto.service.ProfileService;
 
+/**
+ * Admin servlet handles all administrative operations including bike and user management.
+ * Supports file uploads for bike images and manages CRUD operations for bikes and users.
+ * 
+ * @WebServlet Maps to "/admin" URL and supports asynchronous operations.
+ * @MultipartConfig Configures file upload limits (2MB threshold, 10MB max file, 50MB max request).
+ */
 @WebServlet(asyncSupported = true, urlPatterns = {"/admin"})
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
@@ -26,23 +33,38 @@ public class Admin extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ImageUtil imageUtil = new ImageUtil();
     private ProfileService profileService = new ProfileService();
-       
+
+    /**
+     * Handles HTTP GET requests by delegating to processRequest.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
+    /**
+     * Handles HTTP POST requests by delegating to processRequest.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         processRequest(request, response);
     }
-    
+
+    /**
+     * Central request processor for both GET and POST requests.
+     * Loads profile data, handles actions, and prepares admin dashboard data.
+     * 
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If servlet processing fails.
+     * @throws IOException      If I/O operations fail.
+     */
     private void processRequest(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
-        // Always load profile data first
+        // Load user profile data for the admin dashboard
         loadProfileData(request);
         
-        // Set active tab from request parameter if available
+        // Set active tab (defaults to "home" if not specified)
         String activeTab = request.getParameter("activeTab");
         if (activeTab != null) {
             request.setAttribute("activeTab", activeTab);
@@ -50,12 +72,12 @@ public class Admin extends HttpServlet {
             request.setAttribute("activeTab", "home");
         }
         
-        // Handle POST actions if present
+        // Process POST actions (add/update/delete operations)
         if ("POST".equalsIgnoreCase(request.getMethod())) {
             handlePostActions(request);
         }
         
-        // Load admin data
+        // Load all bikes and users for admin view
         AdminService adminService = new AdminService();
         if (adminService.isConnectionError()) {
             request.setAttribute("errorMessage", "Database connection error!");
@@ -68,22 +90,34 @@ public class Admin extends HttpServlet {
         }
         adminService.closeConnection();
         
-        // Forward to JSP
+        // Forward to admin JSP page
         request.getRequestDispatcher("WEB-INF/pages/admin.jsp").forward(request, response);
     }
-    
+
+    /**
+     * Loads profile data of the logged-in admin user.
+     * 
+     * @param request The HTTP request object containing session data.
+     */
     private void loadProfileData(HttpServletRequest request) {
         String email = (String) request.getSession().getAttribute("email");
-        if (email == null) {
-            return;
-        }
+        if (email == null) return;
+        
         UserModel user = profileService.getUserDetails(email);
         if (user != null) {
             request.setAttribute("user", user);
         }
     }
-    
-    private void handlePostActions(HttpServletRequest request) throws IOException, ServletException {
+
+    /**
+     * Handles POST actions (CRUD operations for bikes and users).
+     * 
+     * @param request The HTTP request object containing action parameters.
+     * @throws IOException      If I/O operations fail.
+     * @throws ServletException If servlet processing fails.
+     */
+    private void handlePostActions(HttpServletRequest request) 
+            throws IOException, ServletException {
         String action = request.getParameter("action");
         if (action == null) return;
         
@@ -109,7 +143,10 @@ public class Admin extends HttpServlet {
             adminService.closeConnection();
         }
     }
-    
+
+    /**
+     * Handles bike addition with image upload.
+     */
     private void handleAddBike(HttpServletRequest request, AdminService adminService) 
             throws IOException, ServletException {
         BikeModel bike = createBikeFromRequest(request);
@@ -118,6 +155,9 @@ public class Admin extends HttpServlet {
             success ? "Bike added successfully!" : "Failed to add bike. Plate number might already exist.");
     }
 
+    /**
+     * Handles bike updates with optional image upload.
+     */
     private void handleUpdateBike(HttpServletRequest request, AdminService adminService) 
             throws IOException, ServletException {
         BikeModel bike = createBikeFromRequest(request);
@@ -125,8 +165,12 @@ public class Admin extends HttpServlet {
         request.setAttribute(success ? "successMessage" : "errorMessage", 
             success ? "Bike updated successfully!" : "Failed to update bike.");
     }
-    
-    private BikeModel createBikeFromRequest(HttpServletRequest request) throws IOException, ServletException {
+
+    /**
+     * Creates a BikeModel from request parameters, including image upload handling.
+     */
+    private BikeModel createBikeFromRequest(HttpServletRequest request) 
+            throws IOException, ServletException {
         BikeModel bike = new BikeModel();
         bike.setPlateNo(request.getParameter("plateNo"));
         bike.setBrand(request.getParameter("brand"));
@@ -134,21 +178,28 @@ public class Admin extends HttpServlet {
         bike.setType(request.getParameter("type"));
         bike.setBikeCondition(request.getParameter("condition"));
         
+        // Handle image upload if present
         Part filePart = request.getPart("imageFile");
-        if (filePart != null && filePart.getSize() > 0 && imageUtil.uploadImage(filePart, 
-            request.getServletContext().getRealPath(""), "bikes")) {
+        if (filePart != null && filePart.getSize() > 0 && 
+            imageUtil.uploadImage(filePart, request.getServletContext().getRealPath(""), "bikes")) {
             bike.setImage(imageUtil.getImageNameFromPart(filePart));
         }
         return bike;
     }
-    
+
+    /**
+     * Handles bike deletion by plate number.
+     */
     private void handleDeleteBike(HttpServletRequest request, AdminService adminService) {
         String plateNo = request.getParameter("plateNo");
         boolean success = adminService.deleteBike(plateNo);
         request.setAttribute(success ? "successMessage" : "errorMessage", 
             success ? "Bike deleted successfully!" : "Failed to delete bike.");
     }
-    
+
+    /**
+     * Handles user deletion by email.
+     */
     private void handleDeleteUser(HttpServletRequest request, AdminService adminService) {
         String email = request.getParameter("email");
         boolean success = adminService.deleteUser(email);

@@ -14,6 +14,11 @@ import com.automoto.service.ProfileService;
 import com.automoto.util.ImageUtil;
 import com.automoto.util.ValidationUtil;
 
+/**
+ * Handles user profile management including viewing, updating profile information,
+ * changing passwords, and uploading profile pictures.
+ * Supports multipart requests for file uploads with size limitations.
+ */
 @WebServlet(asyncSupported = true, urlPatterns = {"/profile"})
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2,  // 2MB
@@ -24,6 +29,11 @@ public class Profile extends HttpServlet {
     private static final long serialVersionUID = 1L;
     private ProfileService profileService = new ProfileService();    
     
+    /**
+     * Handles GET requests to display user profile.
+     * Retrieves user details from database and forwards to profile view page.
+     * Redirects to login if no user session exists.
+     */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String email = (String) request.getSession().getAttribute("email");
@@ -40,6 +50,13 @@ public class Profile extends HttpServlet {
         request.getRequestDispatcher("WEB-INF/pages/profile.jsp").forward(request, response);
     }
 
+    /**
+     * Handles POST requests for profile updates including:
+     * - Password changes
+     * - Profile picture uploads
+     * - General profile information updates
+     * Performs validation before processing any updates.
+     */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         String email = (String) request.getSession().getAttribute("email");
@@ -48,17 +65,17 @@ public class Profile extends HttpServlet {
             return;
         }
         
-        // First check if this is a password change request
+        // Handle password change request
         if (request.getParameter("oldPassword") != null) {
             handlePasswordChange(request, response, email);
             return;
         }
         
-        // Check content type for file upload
+        // Check for multipart file upload
         String contentType = request.getContentType();
         boolean isMultipart = contentType != null && contentType.startsWith("multipart/");
         
-        // Handle file upload if multipart request
+        // Handle profile picture upload
         if (isMultipart) {
             try {
                 Part filePart = request.getPart("profile-upload");
@@ -77,11 +94,15 @@ public class Profile extends HttpServlet {
         handleProfileUpdate(request, response, email);
     }
     
+    /**
+     * Processes profile picture uploads.
+     * Validates image type, uploads to server, and updates database record.
+     */
     private void handleProfilePictureUpload(HttpServletRequest request, HttpServletResponse response, 
             String email, Part filePart) throws ServletException, IOException {
         ImageUtil imageUtil = new ImageUtil();
         String imageName = imageUtil.getImageNameFromPart(filePart);
-        
+
         // Validate image type
         if (!imageName.toLowerCase().matches(".*\\.(jpg|jpeg|png|gif)$")) {
             request.setAttribute("error", "Only JPG, JPEG, PNG, or GIF images are allowed");
@@ -99,7 +120,7 @@ public class Profile extends HttpServlet {
             return;
         }
         
-        // Update image name in database
+        // Update database with new image reference
         boolean updateSuccess = profileService.updateProfilePicture(email, imageName);
         if (updateSuccess) {
             request.setAttribute("success", "Profile picture updated successfully");
@@ -110,9 +131,12 @@ public class Profile extends HttpServlet {
         doGet(request, response);
     }
     
+    /**
+     * Handles updates to basic profile information.
+     * Validates all fields and checks for uniqueness before updating.
+     */
     private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response, 
-            String email) throws ServletException, IOException {
-        // Get form data
+        String email) throws ServletException, IOException {
         String firstName = request.getParameter("firstName");
         String lastName = request.getParameter("lastName");
         String phoneNumber = request.getParameter("phoneNumber");
@@ -120,7 +144,7 @@ public class Profile extends HttpServlet {
         String citizenshipNo = request.getParameter("citizenshipNo");
         String licenseNo = request.getParameter("licenseNo");
 
-        // Validate fields
+        // Validate all input fields
         if (ValidationUtil.isNullOrEmpty(firstName) || !ValidationUtil.isAlphabetic(firstName)) {
             request.setAttribute("error", "First name must contain only letters");
             doGet(request, response);
@@ -157,7 +181,7 @@ public class Profile extends HttpServlet {
             return;
         }
 
-        // Validate unique fields
+        // Check for duplicate values
         if (profileService.isEmailTaken(newEmail, email)) {
             request.setAttribute("error", "Email is already taken");
             doGet(request, response);
@@ -182,7 +206,7 @@ public class Profile extends HttpServlet {
             return;
         }
         
-        // Update user
+        // Create and update user model
         UserModel userModel = new UserModel();
         userModel.setFirstName(firstName);
         userModel.setLastName(lastName);
@@ -202,6 +226,10 @@ public class Profile extends HttpServlet {
         doGet(request, response);
     }
     
+    /**
+     * Handles password change requests.
+     * Verifies current password and validates new password before updating.
+     */
     private void handlePasswordChange(HttpServletRequest request, HttpServletResponse response, 
             String email) throws ServletException, IOException {
         String oldPassword = request.getParameter("oldPassword");
@@ -236,7 +264,7 @@ public class Profile extends HttpServlet {
             return;
         }
         
-        // Update password
+        // Update password if all validations pass
         boolean success = profileService.updatePassword(email, newPassword);
         if (success) {
             request.setAttribute("success", "Password updated successfully");
