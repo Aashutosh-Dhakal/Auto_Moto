@@ -87,7 +87,7 @@ public class Login extends HttpServlet {
                 
                 SessionUtil.setAttribute(request, "successMessage", "Login successful! Welcome back!");
                 
-                response.sendRedirect(request.getContextPath() + "/home");
+                response.sendRedirect(request.getContextPath() + "/admin");
             } else {
                 // Failed login handling
                 request.setAttribute("errorMessage", "Invalid email or password");
